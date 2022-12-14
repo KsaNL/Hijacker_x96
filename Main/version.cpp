@@ -28,21 +28,21 @@ static INT g_hj = 3001; // v3.0.0.1 KsaHijack
 static HMODULE g_Module, g_ModuleProxy;
 
 extern "C" {
-	int HJ_GetFileVersionInfoA() { return g_hj + 0; }
-	int HJ_GetFileVersionInfoByHandle() { return g_hj + 1; }
-	int HJ_GetFileVersionInfoExA() { return g_hj + 2; }
-	int HJ_GetFileVersionInfoExW() { return g_hj + 3; }
-	int HJ_GetFileVersionInfoSizeA() { return g_hj + 4; }
-	int HJ_GetFileVersionInfoSizeExA() { return g_hj + 5; }
-	int HJ_GetFileVersionInfoSizeExW() { return g_hj + 6; }
-	int HJ_GetFileVersionInfoSizeW() { return g_hj + 7; }
-	int HJ_GetFileVersionInfoW() { return g_hj + 8; }
-	int HJ_VerFindFileA() { return g_hj + 9; }
-	int HJ_VerFindFileW() { return g_hj + 10; }
-	int HJ_VerInstallFileA() { return g_hj + 11; }
-	int HJ_VerInstallFileW() { return g_hj + 12; }
-	int HJ_VerQueryValueA() { return g_hj + 13; }
-	int HJ_VerQueryValueW() { return g_hj + 14; }
+	int HJ_GetFileVersionInfoA() { return g_hj + 1; }
+	int HJ_GetFileVersionInfoByHandle() { return g_hj + 2; }
+	int HJ_GetFileVersionInfoExA() { return g_hj + 3; }
+	int HJ_GetFileVersionInfoExW() { return g_hj + 4; }
+	int HJ_GetFileVersionInfoSizeA() { return g_hj + 5; }
+	int HJ_GetFileVersionInfoSizeExA() { return g_hj + 6; }
+	int HJ_GetFileVersionInfoSizeExW() { return g_hj + 7; }
+	int HJ_GetFileVersionInfoSizeW() { return g_hj + 8; }
+	int HJ_GetFileVersionInfoW() { return g_hj + 9; }
+	int HJ_VerFindFileA() { return g_hj + 10; }
+	int HJ_VerFindFileW() { return g_hj + 11; }
+	int HJ_VerInstallFileA() { return g_hj + 12; }
+	int HJ_VerInstallFileW() { return g_hj + 13; }
+	int HJ_VerQueryValueA() { return g_hj + 16; }
+	int HJ_VerQueryValueW() { return g_hj + 17; }
 }
 
 #define MACROPROXY(x) \
