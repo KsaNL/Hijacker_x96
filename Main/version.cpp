@@ -50,6 +50,13 @@ extern "C" {
 		::WriteProcessMemory(INVALID_HANDLE_VALUE, &HJ_ ##x, Shells, sizeof Shells, NULL);
 BOOL WINAPI DllFill()
 {
+	// x32Mode
+	// 
+	// static BYTE Shells[7] = { 0xB8,0x00,0x00,0x00,0x00,0xFF,0xE0 };
+	// INT& Jmper = *(PINT)(Shells + 1);
+
+	// x64Mode
+	//
 	static BYTE Shells[12] = { 0x48,0xB8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xE0 };
 	INT64& Jmper = *(PINT64)(Shells + 2);
 
@@ -69,20 +76,67 @@ BOOL WINAPI DllFill()
 	MACROPROXY(VerQueryValueA);
 	MACROPROXY(VerQueryValueW);
 
-	return TRUE;
+	return TRUE; // Always
 }
 #undef MACROPROXY
 
+BOOL WINAPI DllLoad()
+{
+	WCHAR tzPath[MAX_PATH];
+	WCHAR tzTemp[MAX_PATH * 2];
 
+	//GetModuleFileName(NULL,tzPath,MAX_PATH); // Use CurrentConetent
+	//PathRemoveFileSpec(tzPath);
+
+	::GetSystemDirectoryW(tzPath, MAX_PATH); // Default Systeam
+	lstrcatW(tzPath, L"\\version.dll");
+
+	g_ModuleProxy = LoadLibraryW(tzPath);
+	if (g_ModuleProxy == NULL)
+	{
+		wsprintfW(tzTemp, L"无法找到模块 %s,程序无法正常运行", tzPath);
+		::MessageBoxW(NULL, tzTemp, L"ERROR", MB_ICONSTOP);
+	}
+
+	return (g_ModuleProxy != NULL);
+}
+
+INT64 WINAPI GetAddress(PCSTR pszProcName)
+{
+	FARPROC fpAddress;
+	CHAR szProcName[16];
+	WCHAR tzTemp[MAX_PATH];
+
+	fpAddress = ::GetProcAddress(g_ModuleProxy, pszProcName);
+	if (fpAddress == NULL)
+	{
+		if (HIWORD(pszProcName) == 0)
+		{
+			wsprintfA(szProcName, "#%d", *(PDWORD)pszProcName);
+			pszProcName = szProcName;
+		}
+
+		wsprintf(tzTemp, L"无法找到函数 %hs , 程序无法正常运行", pszProcName);
+		::MessageBoxW(NULL, tzTemp, L"ERROR", MB_ICONSTOP);
+		::ExitProcess(-2);
+	}
+	return (INT64)fpAddress;
+}
+
+BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReason, PVOID lpReserved)
+{
+	UNREFERENCED_PARAMETER(lpReserved);
+	static BOOL scModuleInited = FALSE;
+	
 	if (dwReason == DLL_PROCESS_ATTACH)
 	{
 		if (!scModuleInited) {
 
 			if (DllLoad() && DllFill())
 			{
-				g_Module = hModule;
-				g_ModuleProxy = g_ModuleProxy;
-				// DllHook_Prepare(); ToDo: Input your sync codes here
+				g_Module = hModule; // Self
+				// g_ModuleProxy = g_ModuleProxy;
+				// ToDo: Input your sync codes here
 
 				printf(
 					"ModuleProxy 0x%llX\n",
