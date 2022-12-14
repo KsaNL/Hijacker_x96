@@ -48,6 +48,7 @@ extern "C" {
 #define MACROPROXY(x) \
 		Jmper = GetAddress(#x); \
 		::WriteProcessMemory(INVALID_HANDLE_VALUE, &HJ_ ##x, Shells, sizeof Shells, NULL);
+INT64 WINAPI GetAddress(PCSTR pszProcName);
 BOOL WINAPI DllFill()
 {
 	// x32Mode
